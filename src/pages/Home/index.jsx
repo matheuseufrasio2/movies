@@ -1,3 +1,4 @@
+import { MoviesTable } from '../../components/Table';
 import {
   Container,
 } from './styles';
@@ -5,7 +6,7 @@ import {
 export function Home() {
   return (
     <Container>
-      Home
+      <MoviesTable />
     </Container>
   );
 }

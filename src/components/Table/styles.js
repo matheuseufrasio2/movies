@@ -18,12 +18,16 @@ export const Container = styled.div`
     td {
       padding: 1rem 2rem;
       border: 0;
-      background: var(--white);
+      background: var(--gray-500);
       color: var(--text);
-      border-radius: 0.25rem;
+      max-width: 400px;
 
       &:first-child {
         color: var(--title);
+        border-radius: 4px 0 0 4px;
+      }
+      &:last-child {
+        border-radius: 0 4px 4px 0;
       }
 
       &.deposit {
