@@ -5,6 +5,7 @@ module.exports = {
   },
   extends: [
     'plugin:react/recommended',
+    'plugin:react-hooks/recommended',
     'airbnb',
   ],
   parserOptions: {
@@ -16,9 +17,11 @@ module.exports = {
   },
   plugins: [
     'react',
+    'react-hooks',
   ],
   rules: {
     'import/prefer-default-export': 'off',
     'react/react-in-jsx-scope': 'off',
+    'no-nested-ternary': 'off',
   },
 };
