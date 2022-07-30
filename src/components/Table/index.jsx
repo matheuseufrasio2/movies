@@ -3,7 +3,7 @@
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
-import { Container } from './styles';
+import { Container, TableContainer, FilterContainer } from './styles';
 
 import { api } from '../../services/api';
 import { onlyUnique } from '../../utils/onlyUnique';
@@ -15,24 +15,28 @@ export function MoviesTable() {
   const [isLoading, setIsLoading] = useState(true);
   const [optionsGenre, setOptionsGenre] = useState([]);
 
-  const filteredMovies = useMemo(() => movies.filter((movie) => {
-    if (searchTerm.length > 0 && genreSelected.length === 0) {
-      console.log('searchTerm tá escrito e genero não selecionado');
-      const filteredBySearchTerm = movie.title.toLowerCase().includes(searchTerm.toLowerCase());
-      return filteredBySearchTerm;
-    } if (searchTerm.length > 0 && genreSelected.length > 0) {
-      console.log('searchTerm tá escrito e genero ESTÁ selecionado');
-      const filteredBySearchTerm = movie.title.toLowerCase().includes(searchTerm.toLowerCase());
-      const filteredByGenre = filteredBySearchTerm.genre?.some((g) => g.toLowerCase() === genreSelected);
-      return filteredByGenre;
-    } if (searchTerm.length === 0 && genreSelected.length > 0) {
-      console.log('searchTerm NÃO tá escrito e genero ESTÁ selecionado');
-      const filteredByGenre = movies.genre?.some((g) => g.toLowerCase() === genreSelected);
-      return filteredByGenre;
-    }
+  const filteredMovies = useMemo(() => {
+    const result = movies.filter((movie) => {
+      let filteredBySearchTerm;
+      let filteredByGenre;
+      if (searchTerm.length > 0 && genreSelected.length === 0) {
+        filteredBySearchTerm = movie.title.toLowerCase().includes(searchTerm.toLowerCase());
+        return filteredBySearchTerm;
+      } if (searchTerm.length > 0 && genreSelected.length > 0) {
+        console.log('passou');
+        filteredBySearchTerm = movie.title.toLowerCase().includes(searchTerm.toLowerCase());
+        filteredByGenre = movie.genre?.some((g) => g.toLowerCase() === genreSelected);
+        return filteredByGenre && filteredBySearchTerm;
+      } if (searchTerm.length === 0 && genreSelected.length > 0) {
+        filteredByGenre = movie.genre?.some((g) => g.toLowerCase() === genreSelected);
+        return filteredByGenre;
+      }
 
-    return movie;
-  }), [movies, searchTerm, genreSelected]);
+      return true;
+    });
+
+    return result;
+  }, [genreSelected, movies, searchTerm]);
 
   const loadMovies = useCallback(async () => {
     setIsLoading(true);
@@ -51,15 +55,17 @@ export function MoviesTable() {
         };
       });
 
-      const unique = genres.filter(onlyUnique);
-      setOptionsGenre(unique);
+      if (optionsGenre.length < 1) {
+        const unique = genres.filter(onlyUnique);
+        setOptionsGenre(unique);
+      }
       setMovies(dataFormatted);
     } catch {
       setMovies([]);
     } finally {
       setIsLoading(false);
     }
-  }, []);
+  }, [optionsGenre.length]);
 
   function handleChangeSearchTerm(event) {
     setSearchTerm(event.target.value);
@@ -69,92 +75,70 @@ export function MoviesTable() {
     loadMovies();
   }, [loadMovies]);
 
+  useEffect(() => {
+
+  });
+
   return (
     <Container>
-      <p>
-        genreSelected:
-        {genreSelected}
-      </p>
-      <p>
-        genreSelectedLength:
-        {genreSelected.length}
-      </p>
-      <p>
-        searchTerm:
-        {searchTerm}
-      </p>
-      <p>
-        searchTermLength:
-        {searchTerm.length}
-      </p>
-      <table>
-        <thead>
-          <tr>
-            <th>Title</th>
-            <th>Year</th>
-            <th>Runtime</th>
-            <th>Revenue</th>
-            <th>Rating</th>
-            <th>Genres</th>
-          </tr>
-          <tr>
-            <th>
-              <input
-                value={searchTerm}
-                type="text"
-                placeholder="Filter by title"
-                onChange={handleChangeSearchTerm}
-                className="inputFilter"
-              />
-            </th>
-            <th />
-            <th />
-            <th />
-            <th />
-            <th>
-              <select
-                name="genres"
-                className="genreFilter"
-                value={genreSelected}
-                onChange={(event) => setGenreSelected(event.target.value)}
-              >
-                <option value="">All</option>
-                {optionsGenre.map((optionGenre) => (
-                  <option value={optionGenre.toLowerCase()}>{optionGenre}</option>
-                ))}
-              </select>
-            </th>
-          </tr>
-        </thead>
-        {movies.length > 0 ? (
-          <tbody>
-            {filteredMovies.map((movie) => (
-              <tr key={movie.id}>
-                <td>{movie.title}</td>
-                <td>{movie.year}</td>
-                <td>{movie.runtime}</td>
-                <td>{movie.revenueFormatted}</td>
-                <td>{movie.rating}</td>
-                <td>{movie.genreFormatted}</td>
-              </tr>
-            ))}
-          </tbody>
-
-        ) : isLoading ? (
-          <div>
-            <p>Loading...</p>
-          </div>
-        ) : (
-          <div>
-            <h1>
-              Theres nothing like
-              <strong>
-                {searchTerm}
-              </strong>
-            </h1>
-          </div>
-        )}
-      </table>
+      <FilterContainer>
+        <input
+          value={searchTerm}
+          type="text"
+          placeholder="Filter by title"
+          onChange={handleChangeSearchTerm}
+          className="inputFilter"
+        />
+        <select
+          name="genres"
+          className="genreFilter"
+          value={genreSelected}
+          onChange={(event) => setGenreSelected(event.target.value)}
+        >
+          <option value="">All</option>
+          {optionsGenre.map((optionGenre) => (
+            <option value={optionGenre.toLowerCase()}>{optionGenre}</option>
+          ))}
+        </select>
+      </FilterContainer>
+      <TableContainer>
+        <table>
+          <thead>
+            <tr>
+              <th>Title</th>
+              <th>Year</th>
+              <th>Runtime</th>
+              <th>Revenue</th>
+              <th>Rating</th>
+              <th>Genres</th>
+            </tr>
+          </thead>
+          {isLoading ? (
+            <tbody>
+              <div>Loading...</div>
+            </tbody>
+          ) : (
+            <tbody>
+              {filteredMovies.length > 0 ? (
+                <>
+                  {filteredMovies.map((movie) => (
+                    <tr key={movie.id}>
+                      <td>{movie.title}</td>
+                      <td>{movie.year}</td>
+                      <td>{movie.runtime}</td>
+                      <td>{movie.revenueFormatted}</td>
+                      <td>{movie.rating}</td>
+                      <td>{movie.genreFormatted}</td>
+                    </tr>
+                  ))}
+                </>
+              ) : (
+                <div>Nothing to show...</div>
+              )}
+            </tbody>
+          )}
+        </table>
+      </TableContainer>
     </Container>
   );
 }

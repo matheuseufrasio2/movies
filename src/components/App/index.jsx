@@ -1,13 +1,15 @@
+import { BrowserRouter } from 'react-router-dom';
+
 import GlobalStyles from '../../assets/styles/global';
-import { Home } from '../../pages/Home';
+import { Router } from '../../Router';
 import { Header } from '../Header';
 
 export function App() {
   return (
-    <>
+    <BrowserRouter>
       <GlobalStyles />
       <Header />
-      <Home />
-    </>
+      <Router />
+    </BrowserRouter>
   );
 }

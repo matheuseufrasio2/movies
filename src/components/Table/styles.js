@@ -2,47 +2,11 @@ import styled from 'styled-components';
 
 export const Container = styled.div`
   margin-top: 4rem;
-
-  table {
-    width: 100%;
-    border-spacing: 0 0.5rem;
-
-    th {
-      color: var(--text);
-      font-weight: 400;
-      padding: 1rem 2rem;
-      text-align: left;
-      line-height: 1.5rem;
-    }
-
-    td {
-      padding: 1rem 2rem;
-      border: 0;
-      background: var(--gray-500);
-      color: var(--text);
-      max-width: 400px;
-
-      &:first-child {
-        color: var(--title);
-        border-radius: 4px 0 0 4px;
-      }
-      &:last-child {
-        border-radius: 0 4px 4px 0;
-      }
-
-      &.deposit {
-        color: var(--green);
-      }
-
-      &.withdraw {
-        color: var(--red);
-      }
-
-    }
-
-
-
-  }
+`;
+export const FilterContainer = styled.div`
+  display: flex;
+  margin-bottom: 0.5rem;
+  gap: 3rem;
 
   .inputFilter {
     color: var(--gray-500);
@@ -81,5 +45,67 @@ export const Container = styled.div`
     &:focus {
       border: 2px solid var(--blue);
     }
+  }
+`;
+
+export const TableContainer = styled.div`
+  height: 65vh;
+  overflow: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #888;
+  }
+
+  table {
+    width: 100%;
+    border-spacing: 0 0.5rem;
+    max-height: 50vh;
+    overflow-y: auto;
+
+    thead tr th {
+      position: sticky;
+      top: 0;
+      background-color: var(--blue-light);
+    }
+
+    th {
+      color: var(--text);
+      font-weight: 400;
+      padding: 1rem 2rem;
+      text-align: left;
+      line-height: 1.5rem;
+    }
+
+    td {
+      padding: 1rem 2rem;
+      border: 0;
+      background: var(--gray-500);
+      color: var(--text);
+      max-width: 350px;
+
+      &:first-child {
+        color: var(--title);
+        border-radius: 4px 0 0 4px;
+      }
+      &:last-child {
+        border-radius: 0 4px 4px 0;
+      }
+
+      &.deposit {
+        color: var(--green);
+      }
+
+      &.withdraw {
+        color: var(--red);
+      }
+
+    }
+
+
+
   }
 `;
