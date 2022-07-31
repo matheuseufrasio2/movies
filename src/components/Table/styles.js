@@ -71,6 +71,14 @@ export const TableContainer = styled.div`
       top: 0;
       background-color: var(--blue-light);
     }
+    tr {
+      cursor: pointer;
+      transition: all 0.2s ease-in-out;
+
+      &:hover {
+        filter: brightness(1.2);
+      }
+    }
 
     th {
       color: var(--text);

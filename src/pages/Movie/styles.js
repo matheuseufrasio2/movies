@@ -3,6 +3,28 @@ import styled from 'styled-components';
 export const Container = styled.div`
   max-width: 1280px;
   margin: 0 auto;
+
+  > a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    background-color: var(--blue-light);
+    width: fit-content;
+    border-radius: 4px;
+    padding: 0 1rem;
+    transition: all 0.2s ease-in-out;
+
+    margin: 1rem;
+
+    > span {
+      margin-left: 0.5rem;
+    }
+
+    &:hover {
+      filter: brightness(0.8);
+    }
+  }
 `;
 
 export const MakeCommentContainer = styled.div`
@@ -47,11 +69,17 @@ export const Button = styled.button`
   &:hover {
     background-color: var(--blue-light);
   }
+
+  &:disabled {
+    background-color: #888;
+    color: #333;
+    cursor: not-allowed;
+  }
 `;
 
 export const CommentsContainer = styled.div`
   padding: 0 1rem;
-  height: 60vh;
+  height: 57vh;
   overflow: auto;
 
   &::-webkit-scrollbar {

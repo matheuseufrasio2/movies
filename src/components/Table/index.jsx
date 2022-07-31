@@ -3,6 +3,7 @@
 import {
   useCallback, useEffect, useMemo, useState,
 } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Container, TableContainer, FilterContainer } from './styles';
 
 import { api } from '../../services/api';
@@ -14,6 +15,8 @@ export function MoviesTable() {
   const [genreSelected, setGenreSelected] = useState('');
   const [isLoading, setIsLoading] = useState(true);
   const [optionsGenre, setOptionsGenre] = useState([]);
+
+  const navigate = useNavigate();
 
   const filteredMovies = useMemo(() => {
     const result = movies.filter((movie) => {
@@ -45,11 +48,11 @@ export function MoviesTable() {
       const response = await api.get('/movies');
 
       const genres = [];
-      const dataFormatted = response.data.map((movie, index) => {
+      const dataFormatted = response.data.map((movie) => {
         movie.genre.forEach((g) => genres.push(g));
         return {
           ...movie,
-          id: index + Math.random(),
+          id: `${movie.title.toLowerCase().replaceAll(' ', '-')}_${movie.votes}`,
           revenueFormatted: movie.revenue.length > 0 ? `$${movie.revenue}` : '$0.00',
           genreFormatted: movie.genre.join(', '),
         };
@@ -69,6 +72,10 @@ export function MoviesTable() {
 
   function handleChangeSearchTerm(event) {
     setSearchTerm(event.target.value);
+  }
+
+  function navigateToMovie(id) {
+    navigate(`/movie/${id}`);
   }
 
   useEffect(() => {
@@ -115,14 +122,16 @@ export function MoviesTable() {
           </thead>
           {isLoading ? (
             <tbody>
-              <div>Loading...</div>
+              <tr style={{ width: '100%' }}>
+                <td style={{ width: '1200px' }}>Loading...</td>
+              </tr>
             </tbody>
           ) : (
             <tbody>
               {filteredMovies.length > 0 ? (
                 <>
                   {filteredMovies.map((movie) => (
-                    <tr key={movie.id}>
+                    <tr key={movie.id} onClick={() => navigateToMovie(movie.id)}>
                       <td>{movie.title}</td>
                       <td>{movie.year}</td>
                       <td>{movie.runtime}</td>
