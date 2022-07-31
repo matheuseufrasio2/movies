@@ -60,6 +60,14 @@ export const TableContainer = styled.div`
     background: #888;
   }
 
+  .loading-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
   table {
     width: 100%;
     border-spacing: 0 0.5rem;

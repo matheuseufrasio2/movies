@@ -1,3 +1,4 @@
+/* eslint-disable react/no-array-index-key */
 /* eslint-disable max-len */
 /* eslint-disable jsx-a11y/control-has-associated-label */
 import {
@@ -8,6 +9,7 @@ import { Container, TableContainer, FilterContainer } from './styles';
 
 import { api } from '../../services/api';
 import { onlyUnique } from '../../utils/onlyUnique';
+import { Loader } from '../Loader';
 
 export function MoviesTable() {
   const [movies, setMovies] = useState([]);
@@ -26,7 +28,6 @@ export function MoviesTable() {
         filteredBySearchTerm = movie.title.toLowerCase().includes(searchTerm.toLowerCase());
         return filteredBySearchTerm;
       } if (searchTerm.length > 0 && genreSelected.length > 0) {
-        console.log('passou');
         filteredBySearchTerm = movie.title.toLowerCase().includes(searchTerm.toLowerCase());
         filteredByGenre = movie.genre?.some((g) => g.toLowerCase() === genreSelected);
         return filteredByGenre && filteredBySearchTerm;
@@ -68,7 +69,7 @@ export function MoviesTable() {
     } finally {
       setIsLoading(false);
     }
-  }, [optionsGenre.length]);
+  }, []);
 
   function handleChangeSearchTerm(event) {
     setSearchTerm(event.target.value);
@@ -109,29 +110,27 @@ export function MoviesTable() {
         </select>
       </FilterContainer>
       <TableContainer>
-        <table>
-          <thead>
-            <tr>
-              <th>Title</th>
-              <th>Year</th>
-              <th>Runtime</th>
-              <th>Revenue</th>
-              <th>Rating</th>
-              <th>Genres</th>
-            </tr>
-          </thead>
-          {isLoading ? (
-            <tbody>
-              <tr style={{ width: '100%' }}>
-                <td style={{ width: '1200px' }}>Loading...</td>
+        {isLoading ? (
+          <div className="loading-container">
+            <Loader />
+          </div>
+        ) : (
+          <table>
+            <thead>
+              <tr>
+                <th>Title</th>
+                <th>Year</th>
+                <th>Runtime</th>
+                <th>Revenue</th>
+                <th>Rating</th>
+                <th>Genres</th>
               </tr>
-            </tbody>
-          ) : (
+            </thead>
             <tbody>
               {filteredMovies.length > 0 ? (
                 <>
-                  {filteredMovies.map((movie) => (
-                    <tr key={movie.id} onClick={() => navigateToMovie(movie.id)}>
+                  {filteredMovies.map((movie, index) => (
+                    <tr key={`${movie.id}-${index}`} onClick={() => navigateToMovie(movie.id)}>
                       <td>{movie.title}</td>
                       <td>{movie.year}</td>
                       <td>{movie.runtime}</td>
@@ -142,11 +141,12 @@ export function MoviesTable() {
                   ))}
                 </>
               ) : (
-                <div>Nothing to show...</div>
+                <div className="loading-container">Nothing to show...</div>
               )}
             </tbody>
-          )}
-        </table>
+          </table>
+        )}
+
       </TableContainer>
     </Container>
   );

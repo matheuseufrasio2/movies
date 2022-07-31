@@ -1,3 +1,4 @@
+/* eslint-disable react/jsx-no-useless-fragment */
 import {
   addDoc, collection, getDocs,
 } from 'firebase/firestore';
@@ -5,6 +6,7 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { useCallback, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { db } from '../../lib/firebase';
+import { Loader } from '../../components/Loader';
 
 import {
   Container,
@@ -23,11 +25,12 @@ export function Movie() {
   const [comment, setComment] = useState('');
   const [comments, setComments] = useState([]);
   const [isSubmittingComment, setIsSubmittingComment] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
 
-  console.log(comments);
   const { slug } = useParams();
 
   const getData = useCallback(async () => {
+    setIsLoading(true);
     const commentsCollection = collection(db, 'comments');
     await getDocs(commentsCollection)
       .then((snapshot) => {
@@ -40,6 +43,7 @@ export function Movie() {
           }
         });
         setComments(commentsDoc);
+        setIsLoading(false);
       });
   }, [slug]);
 
@@ -85,18 +89,29 @@ export function Movie() {
         </Button>
       </MakeCommentContainer>
 
-      {comments.length > 0 ? (
-        <CommentsContainer>
-          {comments.map((commentItem) => (
-            <Comment key={commentItem.id}>
-              <strong>{commentItem.comment}</strong>
-              <span>{commentItem.dateFormatted}</span>
-            </Comment>
-          ))}
-        </CommentsContainer>
+      {isLoading ? (
+        <div className="other-container">
+          <Loader />
+        </div>
       ) : (
-        <div>Nothing to show</div>
+        <>
+          {comments.length > 0 ? (
+            <CommentsContainer>
+              {comments.map((commentItem) => (
+                <Comment key={commentItem.id}>
+                  <strong>{commentItem.comment}</strong>
+                  <span>{commentItem.dateFormatted}</span>
+                </Comment>
+              ))}
+            </CommentsContainer>
+          ) : (
+            <div className="other-container">
+              <h2>Nothing to show...</h2>
+            </div>
+          )}
+        </>
       )}
+
     </Container>
   );
 }
